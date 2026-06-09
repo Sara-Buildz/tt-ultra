@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TT ULTRA | Login</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { 
+            background: linear-gradient(rgba(59, 28, 99, 0.9), rgba(59, 28, 99, 0.9)), 
+                        url('https://images.unsplash.com/photo-1534158914592-062992fbe900?q=80&w=1500');
+            background-size: cover; height: 100vh; display: flex; align-items: center; justify-content: center;
+            transition: background 0.3s ease;
+        }
+        .login-card { 
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2);
+            padding: 50px; border-radius: 40px; width: 400px; text-align: center; color: white;
+            transition: 0.3s;
+        }
+        .logo { font-size: 28px; font-weight: 900; margin-bottom: 30px; display: block; text-decoration: none; color: white; }
+        input { 
+            width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 12px; border: none; 
+            background: white; color: #3B1C63; font-weight: 600;
+        }
+        .btn-login { 
+            background: #FF1F8A; color: white; border: none; padding: 18px; width: 100%; 
+            border-radius: 12px; font-weight: 900; cursor: pointer;
+        }
+        a { color: #C6FF5E; text-decoration: none; font-size: 13px; font-weight: 700; margin-top: 20px; display: block;}
+
+        /* DARK MODE */
+        body.dark { background: #121212 !important; background-image: none !important; }
+        body.dark .login-card { background: rgba(0,0,0,0.6); border-color: #444; }
+        body.dark input { background: #2a2a2a; color: white; border: 1px solid #444; }
+    </style>
+    <link rel="stylesheet" href="chatbot.css">
+</head>
+<body>
+
+<button id="themeToggle" style="position:fixed;top:20px;right:20px;padding:10px 15px;border-radius:10px;border:none;background:#FF1F8A;color:white;font-weight:bold;cursor:pointer;z-index:999;">
+    🌙
+</button>
+
+    <div class="login-card">
+        <a href="index.html" class="logo">TT<span style="color:#FF1F8A">ULTRA</span></a>
+        <h2 style="margin-bottom: 20px;">PLAYER LOGIN</h2>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Gaming Email" required>
+            <input type="password" id="pass" placeholder="Password" required>
+            <button type="submit" class="btn-login">ENTER THE ARENA</button>
+        </form>
+        <a href="signup.html">NEW PLAYER? SIGN UP</a>
+    </div>
+
+    <script>
+        // --- THEME LOGIC ---
+        const themeBtn = document.getElementById('themeToggle');
+        const body = document.body;
+
+        if (localStorage.getItem('tt_theme') === 'dark') {
+            body.classList.add('dark');
+            themeBtn.innerText = "☀️";
+        }
+
+        themeBtn.addEventListener('click', () => {
+            body.classList.toggle('dark');
+            const isDark = body.classList.contains('dark');
+            localStorage.setItem('tt_theme', isDark ? 'dark' : 'light');
+            themeBtn.innerText = isDark ? "☀️" : "🌙";
+        });
+
+        // --- LOGIN LOGIC (Existing) ---
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('pass').value;
+            const users = JSON.parse(localStorage.getItem("tt_users")) || [];
+            const user = users.find(u => u.email === email && u.password === pass);
+
+            if (user) {
+                sessionStorage.setItem("activeUser", JSON.stringify(user));
+                alert("Welcome back!");
+                window.location.href = "index.html";
+            } else {
+                alert("Login Failed. Check your details.");
+            }
+        });
+    </script>
+    <script src="chatbot.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TT ULTRA | Teams</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        /* Removed the padding from body so the nav bar can touch the edges */
+        body { background: #F9F9F9; color: #3B1C63; padding-bottom: 50px; transition: background 0.3s, color 0.3s; }
+        
+        /* --- NAVIGATION STYLES --- */
+        nav { width: 100%; }
+        .main-nav { padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; background: white; border-bottom: 2px solid #C6FF5E; transition: background 0.3s; }
+        .logo { font-size: 30px; font-weight: 900; color: #3B1C63; text-decoration: none; }
+        .nav-links { display: flex; align-items: center; }
+        .nav-links a { margin-left: 30px; text-decoration: none; color: #3B1C63; font-weight: 700; transition: color 0.3s; }
+        
+        /* --- TEAMS CONTENT STYLES --- */
+        .page-content { padding: 50px 10%; } /* Moved the padding here for the cards */
+        .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .team-card { background: white; border-radius: 25px; padding: 40px; text-align: center; border-bottom: 8px solid #C6FF5E; transition: 0.4s; }
+        .team-card:hover { transform: translateY(-10px); border-bottom-color: #FF1F8A; }
+        .team-badge { background: #FF1F8A; color: white; padding: 8px 20px; border-radius: 50px; font-size: 14px; font-weight: bold; display: inline-block; margin-bottom: 15px; }
+
+        /* --- DARK MODE STYLES --- */
+        body.dark { background: #121212; color: white; }
+        body.dark .main-nav { background: #1e1e1e; border-bottom: 2px solid #FF1F8A; }
+        body.dark .logo { color: white; }
+        body.dark .nav-links a { color: white; }
+        body.dark .nav-links a:hover { color: #FF1F8A; }
+        body.dark .team-card { background: #1e1e1e; color: white; border-bottom: 8px solid #FF1F8A; }
+    </style>
+    <link rel="stylesheet" href="chatbot.css">
+</head>
+<body>
+
+    <nav>
+        <div class="main-nav">
+            <a href="index.html" class="logo">TT<span style="color:#FF1F8A">ULTRA</span></a>
+            <div class="nav-links">
+                <a href="index.html">HOME</a>
+                <a href="schedule.html">SCHEDULE</a>
+                <a href="players.html">ATHLETES</a>
+                <a href="teams.html">TEAMS</a>
+                <a href="contact.html">SUPPORT</a>
+                <a href="join.html">REGISTER</a>
+            </div>
+        </div>
+    </nav>
+
+    <button id="themeToggle" style="position:fixed;top:80px;right:20px;padding:10px 15px;border-radius:10px;border:none;background:#FF1F8A;color:white;font-weight:bold;cursor:pointer;z-index:999;">
+        🌙
+    </button>
+
+    <div class="page-content">
+        <h2 style="font-size: 3rem; margin-bottom: 40px;">TEAMS <span style="color:#FF1F8A">& CLUBS</span></h2>
+
+        <div class="team-grid" id="teamsContainer">
+            </div>
+    </div>
+
+    <script src="teams.js"></script>
+    <script>
+    // Theme Toggle Logic
+    const btn = document.getElementById('themeToggle');
+    const body = document.body;
+
+    // Check for saved theme on page load
+    if (localStorage.getItem('tt_theme') === 'dark') {
+        body.classList.add('dark');
+        btn.textContent = "☀️";
+    }
+
+    // Toggle theme on click
+    btn.addEventListener('click', () => {
+        body.classList.toggle('dark');
+        const isDark = body.classList.contains('dark');
+        localStorage.setItem('tt_theme', isDark ? 'dark' : 'light');
+        btn.textContent = isDark ? "☀️" : "🌙";
+    });
+    </script>
+    <script src="chatbot.js" defer></script>
+
+</body>
+</html>

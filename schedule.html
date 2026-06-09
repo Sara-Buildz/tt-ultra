@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TT ULTRA | Schedule</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { padding: 50px 10%; background: #F9F9F9; color: #3B1C63; }
+        .match-table { width: 100%; border-spacing: 0 15px; border-collapse: separate; }
+        .match-table tr { background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .match-table td { padding: 25px; font-weight: bold; }
+        .status-badge { padding: 8px 15px; border-radius: 20px; background: #C6FF5E; color: #3B1C63; font-weight: 900; }
+
+        body.dark { background: #121212; color: white; }
+        body.dark .match-table tr { background: #1e1e1e; }
+        /* --- NAVIGATION STYLES --- */
+        nav { width: 100%; }
+        .main-nav { padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; background: white; border-bottom: 2px solid #C6FF5E; transition: background 0.3s; }
+        .logo { font-size: 30px; font-weight: 900; color: #3B1C63; text-decoration: none; }
+        .nav-links { display: flex; align-items: center; }
+        .nav-links a { margin-left: 30px; text-decoration: none; color: #3B1C63; font-weight: 700; transition: color 0.3s; }
+        
+        /* --- DARK MODE NAVIGATION --- */
+        body.dark .main-nav { background: #1e1e1e; border-bottom: 2px solid #FF1F8A; }
+        body.dark .logo { color: white; }
+        body.dark .nav-links a { color: white; }
+        body.dark .nav-links a:hover { color: #FF1F8A; }
+    </style>
+    <link rel="stylesheet" href="chatbot.css">
+</head>
+<body>
+
+<button id="themeToggle" style="position:fixed;top:20px;right:20px;padding:10px 15px;border-radius:10px;border:none;background:#FF1F8A;color:white;font-weight:bold;cursor:pointer;z-index:999;">
+    🌙
+</button>
+
+<nav>
+        <div class="main-nav">
+            <a href="index.html" class="logo">TT<span style="color:#FF1F8A">ULTRA</span></a>
+            <div class="nav-links">
+                <a href="index.html">HOME</a>
+                <a href="schedule.html">SCHEDULE</a>
+                <a href="players.html">ATHLETES</a>
+                <a href="teams.html">TEAMS</a>
+                <a href="contact.html">SUPPORT</a>
+                <a href="join.html">REGISTER</a>
+            </div>
+        </div>
+    </nav>
+
+<h2 style="font-size: 3rem; margin-bottom: 30px;">ULTRA <span style="color:#FF1F8A">TIMELINE</span></h2>
+
+<table class="match-table" id="tournamentsTable"></table>
+
+<script>
+// Theme Toggle
+const btn = document.getElementById('themeToggle');
+const body = document.body;
+
+if (localStorage.getItem('tt_theme') === 'dark') {
+    body.classList.add('dark');
+    btn.textContent = "☀️";
+}
+
+btn.addEventListener('click', () => {
+    body.classList.toggle('dark');
+    const isDark = body.classList.contains('dark');
+    localStorage.setItem('tt_theme', isDark ? 'dark' : 'light');
+    btn.textContent = isDark ? "☀️" : "🌙";
+});
+
+// Load Tournaments
+async function loadTournaments() {
+    try {
+        const res = await fetch('http://localhost:3000/tournaments');
+        const tournaments = await res.json();
+        displayData(tournaments);
+    } catch (e) {
+        console.log("Using fallback");
+        displayData([
+            {date:"2026-06-15", name:"National Table Tennis Championship", location:"Lahore", status:"UPCOMING"},
+            {date:"2026-07-01", name:"Punjab Open TT Tournament", location:"Islamabad", status:"UPCOMING"},
+            {date:"2026-07-20", name:"Sindh Table Tennis League", location:"Karachi", status:"REGISTRATION OPEN"}
+        ]);
+    }
+}
+
+function displayData(tournaments) {
+    const table = document.getElementById('tournamentsTable');
+    table.innerHTML = '';
+    
+    tournaments.forEach(t => {
+        const tr = document.createElement('tr');
+        const status = t.status || "UPCOMING";   // Fix for undefined
+        
+        tr.innerHTML = `
+            <td>${t.date}</td>
+            <td style="color:#FF6D8B">${t.name}</td>
+            <td>${t.location || 'Main Venue'}</td>
+            <td><span class="status-badge">${status}</span></td>
+        `;
+        table.appendChild(tr);
+    });
+}
+
+// Run
+loadTournaments();
+</script>
+    <script src="chatbot.js" defer></script>
+
+</body>
+</html>

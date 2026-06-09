@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Athletes - TT ULTRA</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: #F9F9F9; color: #3B1C63; transition: background 0.3s ease; }
+        .main-nav { padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; background: white; border-bottom: 2px solid #C6FF5E; transition: 0.3s; }
+        .logo { font-size: 30px; font-weight: 900; color: #3B1C63; text-transform: uppercase; text-decoration: none;}
+        .nav-links a { margin-left: 30px; text-decoration: none; color: #3B1C63; font-weight: 700; transition: 0.3s; }
+
+        .filter-section { padding: 30px 10% 0; display: flex; gap: 15px; flex-wrap: wrap; }
+        .filter-section input, .filter-section select { padding: 12px 20px; border-radius: 12px; border: 2px solid #3B1C63; font-weight: 600; outline: none; }
+        .filter-section input { flex: 1; min-width: 200px; }
+
+        .player-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; padding: 30px 10% 50px; }
+
+        .p-card { background: white; border-radius: 25px; padding: 40px; text-align: center; border-bottom: 8px solid #C6FF5E; transition: 0.4s; animation: flipIn 0.6s ease-out; }
+        @keyframes flipIn { from { transform: rotateY(90deg); opacity: 0; } to { transform: rotateY(0deg); opacity: 1; } }
+        .p-card:hover { border-bottom-color: #FF1F8A; background: #3B1C63; color: white; transform: translateY(-10px); }
+        .p-card img { width: 120px; height: 120px; border-radius: 50%; border: 5px solid #FF1F8A; margin-bottom: 20px; }
+
+        .diamond-badge { background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); color: white; padding: 5px 15px; border-radius: 50px; font-size: 11px; font-weight: 900; display: inline-block; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4); border: 1px solid white; }
+
+        .rank-tag { background: #FF1F8A; color: white; padding: 5px 15px; border-radius: 10px; display: inline-block; font-size: 12px; font-weight: bold; margin-top: 10px; }
+        .player-info { margin-top: 10px; font-size: 0.9rem; opacity: 0.8; }
+
+        /* DARK MODE */
+        body.dark { background: #121212; color: white; }
+        body.dark .main-nav { background: #1e1e1e; }
+        body.dark .logo, body.dark .nav-links a { color: white; } /* Fix for navigation text */
+        body.dark .p-card { background: #1e1e1e; color: white; }
+        body.dark .filter-section input, body.dark .filter-section select { background: #2a2a2a; color: white; border-color: #C6FF5E; }
+    </style>
+    <link rel="stylesheet" href="chatbot.css">
+</head>
+<body>
+
+<button id="themeToggle" style="position:fixed;top:20px;right:20px;padding:10px 15px;border-radius:10px;border:none;background:#FF1F8A;color:white;font-weight:bold;cursor:pointer;z-index:999;">
+    🌙
+</button>
+
+<div class="main-nav">
+    <a href="index.html" class="logo">TT<span style="color:#FF1F8A">ULTRA</span></a>
+    <div class="nav-links">
+        <a href="index.html">HOME</a>
+        <a href="schedule.html">SCHEDULE</a>
+        <a href="players.html">ATHLETES</a>
+        <a href="teams.html">TEAMS</a>
+        <a href="contact.html">SUPPORT</a>
+        <a href="join.html">REGISTER</a>
+    </div>
+</div>
+
+<div class="filter-section">
+    <input type="text" id="nameSearch" placeholder="Search player name...">
+    <select id="regionFilter">
+        <option value="all">All Regions</option>
+        <option value="PUNJAB">Punjab</option>
+        <option value="SINDH">Sindh</option>
+        <option value="KPK">KPK</option>
+        <option value="BALOCHISTAN">Balochistan</option>
+        <option value="ISLAMABAD">Islamabad</option>
+    </select>
+    <select id="rankSort">
+        <option value="none">Sort By Rank</option>
+        <option value="top">Top Ranked First</option>
+    </select>
+</div>
+
+<div class="player-grid" id="playersContainer"></div>
+
+<script src="players.js"></script>
+
+<script>
+    // Theme Logic for Athletes Page
+    const btn = document.getElementById('themeToggle');
+    const body = document.body;
+
+    // Check for saved preference on load
+    if (localStorage.getItem('tt_theme') === 'dark') {
+        body.classList.add('dark');
+        btn.innerText = "☀️";
+    }
+
+    btn.addEventListener('click', () => {
+        body.classList.toggle('dark');
+        const isDark = body.classList.contains('dark');
+        
+        // Save choice
+        localStorage.setItem('tt_theme', isDark ? 'dark' : 'light');
+        
+        // Switch icon
+        btn.innerText = isDark ? "☀️" : "🌙";
+    });
+</script>
+    <script src="chatbot.js" defer></script>
+</body>
+</html>

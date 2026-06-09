@@ -1,0 +1,416 @@
+/**
+ * TT ULTRA — Copilot-style chatbot sidebar (Phase A: layout foundation only)
+ * Requires Phase B JS: wrap content in #tt-page-main, inject #tt-chatbot-panel,
+ * toggle body class .tt-chatbot-open, set --tt-chatbot-width on resize.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Design tokens (match site palette; no changes to existing pages)    */
+/* ------------------------------------------------------------------ */
+:root {
+    --tt-chatbot-width: 380px;
+    --tt-chatbot-min-width: 280px;
+    --tt-chatbot-max-width: 50vw;
+    --tt-chatbot-transition-duration: 0.32s;
+    --tt-chatbot-transition-ease: cubic-bezier(0.4, 0, 0.2, 1);
+    --tt-chatbot-transition: var(--tt-chatbot-transition-duration) var(--tt-chatbot-transition-ease);
+
+    --tt-chatbot-bg: #ffffff;
+    --tt-chatbot-border: #C6FF5E;
+    --tt-chatbot-accent: #FF1F8A;
+    --tt-chatbot-primary: #3B1C63;
+    --tt-chatbot-neon: #C6FF5E;
+    --tt-chatbot-text: #3B1C63;
+    --tt-chatbot-muted: #6b6280;
+    --tt-chatbot-resizer-width: 6px;
+    --tt-chatbot-shadow: -8px 0 24px rgba(59, 28, 99, 0.12);
+    --tt-chatbot-z-panel: 1000;
+    --tt-chatbot-z-fab: 998;
+}
+
+body.dark {
+    --tt-chatbot-bg: #1e1e1e;
+    --tt-chatbot-border: #FF1F8A;
+    --tt-chatbot-text: #f5f5f5;
+    --tt-chatbot-muted: #a8a8b8;
+    --tt-chatbot-shadow: -8px 0 24px rgba(0, 0, 0, 0.45);
+}
+
+/* ------------------------------------------------------------------ */
+/* Push layout: main column (existing page content lives here)         */
+/* ------------------------------------------------------------------ */
+#tt-page-main {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    transition: flex var(--tt-chatbot-transition), max-width var(--tt-chatbot-transition);
+}
+
+/* When sidebar is open, body becomes a horizontal flex shell (Copilot push) */
+body.tt-chatbot-open {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    overflow-x: hidden;
+}
+
+body.tt-chatbot-open #tt-page-main {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+/* index.html: body uses overflow:hidden + 100vh — allow scroll inside main only */
+body.tt-chatbot-open#tt-index-page #tt-page-main,
+body.tt-chatbot-open.tt-page-index #tt-page-main {
+    height: 100vh;
+    overflow-y: auto;
+}
+
+/* login.html: keep card centered inside main, not full body flex centering */
+body.tt-chatbot-open.tt-page-login #tt-page-main {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ------------------------------------------------------------------ */
+/* Sidebar panel — closed by default (zero width, no layout impact)      */
+/* ------------------------------------------------------------------ */
+#tt-chatbot-panel {
+    flex: 0 0 0;
+    width: 0;
+    min-width: 0;
+    max-width: 0;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    border-left: 0 solid transparent;
+    background: var(--tt-chatbot-bg);
+    box-shadow: none;
+    transition:
+        width var(--tt-chatbot-transition),
+        min-width var(--tt-chatbot-transition),
+        max-width var(--tt-chatbot-transition),
+        flex-basis var(--tt-chatbot-transition),
+        opacity calc(var(--tt-chatbot-transition-duration) * 0.85) var(--tt-chatbot-transition-ease),
+        visibility 0s linear var(--tt-chatbot-transition-duration),
+        box-shadow var(--tt-chatbot-transition),
+        border-color var(--tt-chatbot-transition);
+    z-index: var(--tt-chatbot-z-panel);
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+}
+
+/* Open: panel takes dedicated space on the right (push, not overlay) */
+body.tt-chatbot-open #tt-chatbot-panel {
+    flex: 0 0 var(--tt-chatbot-width);
+    width: var(--tt-chatbot-width);
+    min-width: var(--tt-chatbot-min-width);
+    max-width: var(--tt-chatbot-max-width);
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: 100vh;
+    max-height: 100vh;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    border-left: 2px solid var(--tt-chatbot-border);
+    box-shadow: var(--tt-chatbot-shadow);
+    transition:
+        width var(--tt-chatbot-transition),
+        min-width var(--tt-chatbot-transition),
+        max-width var(--tt-chatbot-transition),
+        flex-basis var(--tt-chatbot-transition),
+        opacity calc(var(--tt-chatbot-transition-duration) * 0.85) var(--tt-chatbot-transition-ease),
+        visibility 0s linear 0s,
+        box-shadow var(--tt-chatbot-transition),
+        border-color var(--tt-chatbot-transition);
+}
+
+/* ------------------------------------------------------------------ */
+/* Horizontal resize handle (left edge of panel)                       */
+/* ------------------------------------------------------------------ */
+.tt-chatbot-resizer {
+    flex: 0 0 var(--tt-chatbot-resizer-width);
+    width: var(--tt-chatbot-resizer-width);
+    cursor: col-resize;
+    touch-action: none;
+    user-select: none;
+    background: transparent;
+    position: relative;
+    z-index: 2;
+    transition: background 0.15s ease;
+}
+
+.tt-chatbot-resizer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    transform: translateX(-50%);
+    background: var(--tt-chatbot-border);
+    border-radius: 2px;
+    opacity: 0.5;
+    transition: opacity 0.15s ease, background 0.15s ease, width 0.15s ease;
+}
+
+.tt-chatbot-resizer:hover::before,
+.tt-chatbot-resizer.tt-chatbot-resizer--active::before {
+    opacity: 1;
+    width: 3px;
+    background: var(--tt-chatbot-accent);
+}
+
+body.tt-chatbot-open .tt-chatbot-resizer:hover,
+body.tt-chatbot-open .tt-chatbot-resizer.tt-chatbot-resizer--active {
+    background: rgba(255, 31, 138, 0.06);
+}
+
+/* ------------------------------------------------------------------ */
+/* Sidebar inner layout (structure for Phase B UI)                     */
+/* ------------------------------------------------------------------ */
+.tt-chatbot-sidebar {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-height: 100vh;
+    background: var(--tt-chatbot-bg);
+    color: var(--tt-chatbot-text);
+}
+
+.tt-chatbot-header {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 18px;
+    border-bottom: 2px solid var(--tt-chatbot-border);
+    background: var(--tt-chatbot-bg);
+}
+
+.tt-chatbot-header__title {
+    font-size: 0.95rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--tt-chatbot-primary);
+}
+
+body.dark .tt-chatbot-header__title {
+    color: var(--tt-chatbot-neon);
+}
+
+.tt-chatbot-header__title span {
+    color: var(--tt-chatbot-accent);
+}
+
+.tt-chatbot-close {
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--tt-chatbot-primary);
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.tt-chatbot-close:hover {
+    background: rgba(255, 31, 138, 0.12);
+    color: var(--tt-chatbot-accent);
+}
+
+body.dark .tt-chatbot-close {
+    color: var(--tt-chatbot-text);
+}
+
+.tt-chatbot-messages {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.tt-chatbot-input-area {
+    flex: 0 0 auto;
+    padding: 14px 18px 18px;
+    border-top: 2px solid var(--tt-chatbot-border);
+    background: var(--tt-chatbot-bg);
+}
+
+.tt-chatbot-input-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.tt-chatbot-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 12px 14px;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--tt-chatbot-text);
+    background: #fafafa;
+    outline: none;
+    transition: border-color 0.15s ease;
+}
+
+.tt-chatbot-input:focus {
+    border-color: var(--tt-chatbot-accent);
+}
+
+body.dark .tt-chatbot-input {
+    background: #2a2a2a;
+    border-color: #444;
+    color: var(--tt-chatbot-text);
+}
+
+.tt-chatbot-send {
+    flex: 0 0 auto;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 12px;
+    background: var(--tt-chatbot-accent);
+    color: #fff;
+    font-weight: 900;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.tt-chatbot-send:hover {
+    background: var(--tt-chatbot-primary);
+}
+
+/* ------------------------------------------------------------------ */
+/* Floating open button (FAB) — fixed on viewport; not the push panel    */
+/* ------------------------------------------------------------------ */
+#tt-chatbot-toggle {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: var(--tt-chatbot-z-fab);
+    width: 56px;
+    height: 56px;
+    border: none;
+    border-radius: 50%;
+    background: var(--tt-chatbot-accent);
+    color: #fff;
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(255, 31, 138, 0.45);
+    transition:
+        right var(--tt-chatbot-transition),
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+#tt-chatbot-toggle:hover {
+    transform: scale(1.06);
+    box-shadow: 0 6px 24px rgba(255, 31, 138, 0.55);
+}
+
+/* Hide FAB while panel is open (Phase B will toggle class) */
+body.tt-chatbot-open #tt-chatbot-toggle {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.9);
+}
+
+/* Shift FAB left when panel open if still visible during transition */
+body.tt-chatbot-open #tt-chatbot-toggle.tt-chatbot-toggle--visible {
+    right: calc(var(--tt-chatbot-width) + 24px);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ------------------------------------------------------------------ */
+/* Existing fixed theme toggle — stay over main content, not sidebar   */
+/* ------------------------------------------------------------------ */
+#themeToggle {
+    transition: right var(--tt-chatbot-transition);
+    top: 84px !important;
+    right: 20px !important;
+    z-index: 997 !important;
+}
+
+body.tt-chatbot-open #themeToggle {
+    right: calc(var(--tt-chatbot-width) + 20px) !important;
+}
+
+.tt-chatbot-sidebar {
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+}
+
+.tt-chatbot-messages {
+    overflow-y: auto;
+}
+
+.tt-chatbot-input-area {
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+}
+
+/* ------------------------------------------------------------------ */
+/* Page-specific safe overrides (scoped; no edits to inline page CSS)  */
+/* ------------------------------------------------------------------ */
+
+/* players.html: 3-column grid compresses when main column narrows */
+body.tt-chatbot-open .player-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+/* schedule.html: allow horizontal scroll for wide table in narrow main */
+body.tt-chatbot-open .match-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+/* contact.html: map container respects shrunken width */
+body.tt-chatbot-open #map-section,
+body.tt-chatbot-open #map {
+    max-width: 100%;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --tt-chatbot-transition-duration: 0.01ms;
+    }
+
+    #tt-chatbot-panel,
+    #tt-page-main,
+    #tt-chatbot-toggle,
+    #themeToggle {
+        transition: none;
+    }
+}

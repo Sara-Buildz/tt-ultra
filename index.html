@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>TT ULTRA | 2026</title>
+
+    <style>
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+
+            background: url('https://images.unsplash.com/photo-1511067007398-7e4b90cfa4bc?q=80&w=1500') no-repeat center center fixed;
+
+            background-size: cover; height: 100vh; overflow: hidden;
+
+        }
+
+        nav { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
+
+        .main-nav { padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; gap: 24px; background: white; }
+
+        .logo { font-size: 30px; font-weight: 900; color: #3B1C63; text-transform: uppercase; text-decoration: none; }
+
+        .nav-links { display: flex; align-items: center; justify-content: flex-end; gap: 24px; flex-wrap: wrap; min-width: 0; }
+
+        .nav-links a { text-decoration: none; color: #3B1C63; font-weight: 700; }
+
+        .wallet-connect { padding: 10px 16px; border: none; border-radius: 10px; background: #FF1F8A; color: white; font-weight: 800; cursor: pointer; white-space: nowrap; }
+
+        .wallet-status { color: #3B1C63; font-size: 0.85rem; font-weight: 700; white-space: nowrap; }
+
+        .hero-container { height: 80vh; display: flex; align-items: center; justify-content: center; }
+
+        .glass-card { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); padding: 60px; border-radius: 30px; text-align: center; }
+
+        .btn-neon { background: #C6FF5E; color: #3B1C63; padding: 20px 40px; border-radius: 50px; text-decoration: none; font-weight: 900; display: inline-block; box-shadow: 0 0 15px #C6FF5E; }
+
+        /* ✅ DARK MODE - Keeps background image with a dark tint */
+        body.dark {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://images.unsplash.com/photo-1511067007398-7e4b90cfa4bc?q=80&w=1500') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        body.dark .main-nav {
+            background: #1e1e1e;
+        }
+
+        body.dark .logo, body.dark .nav-links a {
+            color: white;
+        }
+
+        body.dark .wallet-status {
+            color: white;
+        }
+
+        body.dark .glass-card {
+            background: rgba(0,0,0,0.6);
+            color: white;
+        }
+
+    </style>
+
+    <link rel="stylesheet" href="chatbot.css">
+
+</head>
+
+<body>
+
+    <button id="themeToggle" style="position:fixed;top:20px;right:20px;padding:10px 15px;border-radius:10px;border:none;background:#FF1F8A;color:white;font-weight:bold;cursor:pointer;z-index:999;">
+        🌙
+    </button>
+
+    <nav>
+
+        <div class="main-nav">
+
+            <a href="index.html" class="logo">TT<span style="color:#FF1F8A">ULTRA</span></a>
+
+            <div class="nav-links">
+
+                <a href="index.html">HOME</a>
+
+                <a href="join.html">REGISTER</a>
+
+                <a href="login.html" id="loginLink">LOGIN</a>
+
+                <a href="teams.html">TEAMS</a>
+
+                <button type="button" id="connectWalletBtn" class="wallet-connect">Connect MetaMask</button>
+
+                <span id="walletStatus" class="wallet-status"></span>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+
+    <div class="hero-container">
+
+        <div class="glass-card">
+
+            <h1 style="font-size: 4rem; color: white;">DOMINATE THE TABLE</h1>
+
+            <br>
+
+            <a href="join.html" class="btn-neon" id="mainBtn">ENTER THE ARENA</a>
+
+        </div>
+
+    </div>
+
+
+
+    <script>
+
+        // Check if user is logged in via SessionStorage
+        const user = JSON.parse(sessionStorage.getItem("activeUser"));
+
+        if (user) {
+
+            document.getElementById("mainBtn").innerText = "WELCOME, " + user.firstName.toUpperCase();
+
+            document.getElementById("loginLink").innerText = "LOGOUT";
+
+            document.getElementById("loginLink").href = "#";
+
+            document.getElementById("loginLink").onclick = () => {
+
+                sessionStorage.clear();
+
+                window.location.reload();
+
+            };
+
+        }
+
+        // --- THEME LOGIC ---
+        const btn = document.getElementById('themeToggle');
+        const body = document.body;
+
+        // Apply saved theme on page load
+        if (localStorage.getItem('tt_theme') === 'dark') {
+            body.classList.add('dark');
+            btn.textContent = "☀️";
+        }
+
+        btn.addEventListener('click', () => {
+            body.classList.toggle('dark');
+            // Save current choice to localStorage
+            const isDark = body.classList.contains('dark');
+            localStorage.setItem('tt_theme', isDark ? 'dark' : 'light');
+            btn.textContent = isDark ? "☀️" : "🌙";
+        });
+
+        // --- METAMASK WALLET LOGIC ---
+        const walletBtn = document.getElementById('connectWalletBtn');
+        const walletStatus = document.getElementById('walletStatus');
+
+        function shortAddress(address) {
+            return address.slice(0, 6) + '...' + address.slice(-4);
+        }
+
+        function showConnectedWallet(address) {
+            walletStatus.textContent = shortAddress(address);
+        }
+
+        async function checkConnectedWallet() {
+            if (!window.ethereum) {
+                return;
+            }
+
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                const address = accounts[0];
+
+                if (address) {
+                    showConnectedWallet(address);
+                }
+            } catch (error) {
+                console.warn('Unable to check connected wallet:', error);
+            }
+        }
+
+        checkConnectedWallet();
+
+        walletBtn.addEventListener('click', async () => {
+            if (!window.ethereum) {
+                walletStatus.textContent = 'MetaMask is not installed.';
+                return;
+            }
+
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const address = accounts[0];
+
+                if (address) {
+                    showConnectedWallet(address);
+                    walletBtn.textContent = 'Connected';
+                }
+            } catch (error) {
+                walletStatus.textContent = 'Wallet connection cancelled.';
+            }
+        });
+
+    </script>
+
+    <script src="chatbot.js" defer></script>
+</body>
+
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TT ULTRA | Register</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(rgba(59, 28, 99, 0.8), rgba(59, 28, 99, 0.8)),
+                        url('https://images.unsplash.com/photo-1511067007398-7e4b90cfa4bc?q=80&w=1500');
+            background-size: cover; background-attachment: fixed; min-height: 100vh; color: #3B1C63;
+            transition: background 0.3s ease;
+        }
+        .main-nav { padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; background: white; transition: 0.3s; }
+        .logo { font-size: 30px; font-weight: 900; color: #3B1C63; text-decoration: none; text-transform: uppercase; }
+        .nav-links a { margin-left: 30px; text-decoration: none; color: #3B1C63; font-weight: 700; font-size: 14px;}
+
+        .container { display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
+
+        .reg-card {
+            background: white; padding: 40px; border-radius: 40px; width: 100%; max-width: 450px;
+            text-align: center; position: relative; margin-bottom: 30px; transition: 0.3s;
+        }
+        .badge {
+            background: #C6FF5E; color: black; padding: 5px 15px; border-radius: 20px;
+            font-size: 12px; font-weight: 900; position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+        }
+        h2 { font-size: 32px; font-weight: 900; margin-bottom: 5px; }
+        .sub-text { color: #888; margin-bottom: 25px; font-size: 14px; }
+
+        input {
+            width: 100%; padding: 15px; margin-bottom: 15px; border: 2px solid #3B1C63;
+            border-radius: 12px; outline: none; font-weight: 600; transition: 0.3s;
+        }
+        label { display: block; text-align: left; font-size: 11px; font-weight: 900; margin-bottom: 5px; text-transform: uppercase;}
+        .btn-pink { background: #FF1F8A; color: white; border: none; padding: 18px; width: 100%; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+        .btn-clear { background: #3B1C63; color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: 900; cursor: pointer; margin-top: 10px; text-transform: uppercase;}
+        
+        .list-container { width: 100%; max-width: 600px; }
+        .player-item {
+            background: white; padding: 15px 25px; border-radius: 15px; margin-bottom: 15px;
+            border-left: 8px solid #C6FF5E; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: 0.3s;
+        }
+        .player-info b { font-size: 18px; color: #3B1C63; }
+        .player-info p { font-size: 14px; color: #3B1C63; }
+        .remove-btn { background: #FF0000; color: white; border: none; padding: 8px 15px; border-radius: 8px; font-weight: 800; cursor: pointer; }
+
+        /* DARK MODE */
+        body.dark {
+            background: #121212 !important;
+            background-image: none !important;
+            color: white !important;
+        }
+        body.dark .main-nav { background: #1e1e1e; }
+        body.dark .logo, body.dark .nav-links a { color: white; }
+        body.dark .reg-card, body.dark .player-item {
+            background: #2b2b2b;
+            color: white !important;
+        }
+        body.dark .player-info b, body.dark .player-info p { color: white; }
+        body.dark input {
+            background: #1e1e1e;
+            color: white;
+            border-color: #C6FF5E;
+        }
+        body.dark h2 { color: white; }
+    </style>
+    <link rel="stylesheet" href="chatbot.css">
+</head>
+<body>
+
+    <button id="themeToggle" style="position:fixed;top:20px;right:20px;padding:10px 15px;border-radius:10px;border:none;background:#FF1F8A;color:white;font-weight:bold;cursor:pointer;z-index:999;">
+        🌙
+    </button>
+
+    <div class="main-nav">
+        <a href="index.html" class="logo">TT<span style="color:#FF1F8A">ULTRA</span></a>
+        <div class="nav-links">
+            <a href="index.html">HOME</a>
+            <a href="schedule.html">SCHEDULE</a>
+            <a href="players.html">ATHLETES</a>
+            <a href="join.html" style="color:#FF1F8A">REGISTER</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="reg-card">
+            <div class="badge">LIMITED SLOTS</div>
+            <h2>JOIN THE <span style="color:#FF1F8A">REVOLUTION</span></h2>
+            <p class="sub-text">Official 2026 Player Registration</p>
+            <p id="counter" style="font-weight: 900; margin-bottom: 10px;">SLOTS: 0/10</p>
+            
+            <input type="text" id="pName" placeholder="Full Name">
+            <label>Birth Date (Calendar)</label>
+            <input type="date" id="pBirth">
+            <input type="text" id="pTeam" placeholder="Team Name">
+            
+            <button class="btn-pink" onclick="addPlayer()">Register Player</button>
+            <button class="btn-clear" onclick="clearList()">Clear All</button>
+        </div>
+
+        <div id="list" class="list-container"></div>
+    </div>
+
+    <script>
+        const REG_KEY = "tt_registrations";
+
+        function loadRegistrations() {
+            var registrations = [];
+            try {
+                var saved = localStorage.getItem(REG_KEY);
+                if (saved) {
+                    var parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed)) {
+                        registrations = parsed.filter(function (p) {
+                            return p && p.name && p.team;
+                        });
+                    }
+                }
+            } catch (e) { /* fall through to legacy */ }
+            if (registrations.length === 0) {
+                try {
+                    var legacy = JSON.parse(localStorage.getItem("tt_players") || "[]");
+                    if (Array.isArray(legacy)) {
+                        registrations = legacy.filter(function (p) {
+                            return p && p.name && p.team;
+                        });
+                        if (registrations.length > 0) {
+                            localStorage.setItem(REG_KEY, JSON.stringify(registrations));
+                        }
+                    }
+                } catch (e) { /* ignore */ }
+            }
+            return registrations;
+        }
+
+        var players = [];
+
+        function refreshRegistrations() {
+            players = loadRegistrations();
+            render();
+        }
+
+        function addPlayer() {
+            const name = document.getElementById('pName').value;
+            const team = document.getElementById('pTeam').value;
+            const date = document.getElementById('pBirth').value;
+            if(!name || !team) return alert("Fill in the details!");
+            if(players.length >= 10) return alert("Tournament Full!");
+            players.push({ name, team, date });
+            localStorage.setItem(REG_KEY, JSON.stringify(players));
+            render();
+            document.getElementById('pName').value = "";
+            document.getElementById('pTeam').value = "";
+        }
+
+        function render() {
+            var list = document.getElementById('list');
+            var counter = document.getElementById('counter');
+            if (!list || !counter) {
+                return;
+            }
+            counter.innerText = 'SLOTS: ' + players.length + '/10';
+            list.innerHTML = '';
+            players.forEach(function (p, i) {
+                list.innerHTML += `
+                    <div class="player-item">
+                        <div class="player-info">
+                            <b>${p.name}</b>
+                            <p>Team: ${p.team}</p>
+                        </div>
+                        <button class="remove-btn" onclick="remove(${i})">Remove</button>
+                    </div>`;
+            });
+        }
+
+        function remove(i) {
+            players.splice(i, 1);
+            localStorage.setItem(REG_KEY, JSON.stringify(players));
+            render();
+        }
+
+        function clearList() {
+            if(confirm("Wipe registration list?")) {
+                localStorage.removeItem(REG_KEY);
+                players = [];
+                render();
+            }
+        }
+
+        window.addPlayer = addPlayer;
+        window.remove = remove;
+        window.clearList = clearList;
+
+        refreshRegistrations();
+        document.addEventListener('DOMContentLoaded', refreshRegistrations);
+
+        // --- THEME LOGIC ---
+        const themeBtn = document.getElementById('themeToggle');
+        const body = document.body;
+
+        if (localStorage.getItem('tt_theme') === 'dark') {
+            body.classList.add('dark');
+            themeBtn.innerText = "☀️";
+        }
+
+        themeBtn.addEventListener('click', () => {
+            body.classList.toggle('dark');
+            const isDark = body.classList.contains('dark');
+            localStorage.setItem('tt_theme', isDark ? 'dark' : 'light');
+            themeBtn.innerText = isDark ? "☀️" : "🌙";
+        });
+    </script>
+    <script src="chatbot.js" defer></script>
+</body>
+</html>

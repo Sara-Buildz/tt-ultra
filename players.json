@@ -1,0 +1,8 @@
+[
+  { "name": "Babar Hussain", "region": "PUNJAB", "rank": "1", "score": "4500" },
+  { "name": "Asim Qureshi", "region": "SINDH", "rank": "2", "score": "4200" },
+  { "name": "Fahad Khawaja", "region": "KPK", "rank": "3", "score": "3900" },
+  { "name": "Hamza Ali", "region": "ISLAMABAD", "rank": "4", "score": "3700" },
+  { "name": "Shah Khan", "region": "BALOCHISTAN", "rank": "5", "score": "3500" },
+  { "name": "Rizwan Ahmad", "region": "PUNJAB", "rank": "6", "score": "3100" }
+]

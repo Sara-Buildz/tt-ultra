@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TT ULTRA | Support</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: #F9F9F9; color: #3B1C63; transition: background 0.3s ease; }
+
+        .main-nav { padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; background: white; border-bottom: 2px solid #C6FF5E; transition: 0.3s; }
+        .logo { font-size: 30px; font-weight: 900; color: #3B1C63; text-transform: uppercase; text-decoration: none;}
+        .nav-links a { margin-left: 30px; text-decoration: none; color: #3B1C63; font-weight: 700; transition: 0.3s; }
+
+        .contact-container { padding: 60px 10%; display: flex; gap: 50px; align-items: flex-start; flex-wrap: wrap; }
+        .contact-info { flex: 1; min-width: 300px; }
+        .contact-info h2 { font-size: 4rem; color: #FF1F8A; line-height: 1; margin-bottom: 20px; }
+        
+        .glass-form {
+            flex: 1; background: white; padding: 40px; border-radius: 30px;
+            box-shadow: 20px 20px 0px #C6FF5E; border: 2px solid #3B1C63;
+            min-width: 300px; transition: 0.3s;
+        }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 900; margin-bottom: 8px; text-transform: uppercase; font-size: 13px; }
+        
+        input, textarea {
+            width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 12px;
+            font-size: 1rem; transition: 0.3s; outline: none;
+        }
+        input:focus { border-color: #FF1F8A; background: #FFF9FC; }
+
+        .btn-send {
+            background: #3B1C63; color: #C6FF5E; border: none; padding: 20px;
+            width: 100%; border-radius: 12px; font-weight: 900; font-size: 1.1rem;
+            cursor: pointer; transition: 0.3s; text-transform: uppercase;
+        }
+        .btn-send:hover { background: #FF1F8A; color: white; transform: translateY(-5px); }
+
+        #map-section { padding: 0 10% 60px 10%; }
+        #map {
+            height: 450px; width: 100%; border-radius: 30px;
+            border: 2px solid #3B1C63; z-index: 1;
+        }
+
+        /* DARK MODE STYLES */
+        body.dark { background: #121212; color: white; }
+        body.dark .main-nav { background: #1e1e1e; }
+        body.dark .logo, body.dark .nav-links a { color: white; }
+        body.dark .glass-form { background: #1e1e1e; border-color: #C6FF5E; box-shadow: 20px 20px 0px #FF1F8A; }
+        body.dark input, body.dark textarea { background: #2a2a2a; border-color: #444; color: white; }
+        body.dark .btn-send { background: #C6FF5E; color: #3B1C63; }
+    </style>
+    <link rel="stylesheet" href="chatbot.css">
+</head>
+<body>
+
+<button id="themeToggle" style="position:fixed;top:20px;right:20px;padding:10px 15px;border-radius:10px;border:none;background:#FF1F8A;color:white;font-weight:bold;cursor:pointer;z-index:999;">🌙</button>
+
+    <div class="main-nav">
+        <a href="index.html" class="logo">TT<span style="color:#FF1F8A">ULTRA</span></a>
+        <div class="nav-links">
+            <a href="index.html">HOME</a>
+            <a href="schedule.html">SCHEDULE</a>
+            <a href="players.html">ATHLETES</a>
+            <a href="teams.html">TEAMS</a>
+            <a href="contact.html">SUPPORT</a>
+            <a href="join.html">REGISTER</a>
+        </div>
+    </div>
+
+    <div class="contact-container">
+        <div class="contact-info">
+            <h2>GET IN <br>TOUCH.</h2>
+            <p style="font-size: 1.2rem; margin-top: 20px;">Have questions about the 2026 Season? Our team is here to help you dominate the arena.</p>
+            <div style="margin-top: 40px;">
+                <p><strong>📍 Location:</strong> Air University, Service Road E-9, Islamabad</p>
+                <p><strong>📧 Email:</strong> support@ttultra.pk</p>
+            </div>
+        </div>
+
+        <form class="glass-form">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" placeholder="Enter name" required>
+            </div>
+            <div class="form-group">
+                <label>Date of Birth</label>
+                <input type="date" required>
+            </div>
+            <div class="form-group">
+                <label>Message</label>
+                <textarea rows="4" placeholder="How can we help?"></textarea>
+            </div>
+            <button type="submit" class="btn-send">Send Signal</button>
+        </form>
+    </div>
+
+    <div id="map-section">
+        <div id="map"></div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        var lat = 33.7150;
+        var lng = 73.0247;
+        var map = L.map('map').setView([lat, lng], 16);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+        L.marker([lat, lng])
+            .addTo(map)
+            .bindPopup("<b>TT ULTRA HQ</b><br>Air University, E-9, Islamabad")
+            .openPopup();
+
+        // --- THEME LOGIC ---
+        const themeBtn = document.getElementById('themeToggle');
+        const body = document.body;
+
+        if (localStorage.getItem('tt_theme') === 'dark') {
+            body.classList.add('dark');
+            themeBtn.innerText = "☀️";
+        }
+
+        themeBtn.addEventListener('click', () => {
+            body.classList.toggle('dark');
+            const isDark = body.classList.contains('dark');
+            localStorage.setItem('tt_theme', isDark ? 'dark' : 'light');
+            themeBtn.innerText = isDark ? "☀️" : "🌙";
+        });
+    </script>
+    <script src="chatbot.js" defer></script>
+</body>
+</html>
