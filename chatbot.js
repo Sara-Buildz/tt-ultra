@@ -302,7 +302,7 @@
         const thinkingEl = appendMessage("assistant", "Thinking...");
         const fallbackMsg = "AI assistant is temporarily unavailable.";
 
-        fetch("http://localhost:3000/api/chat", {
+      fetch("https://tt-ultra-production.up.railway.app/api/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ message: text })
