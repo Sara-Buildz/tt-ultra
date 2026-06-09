@@ -302,17 +302,27 @@ app.post('/api/chat', async (req, res) => {
         });
     }
 });
-
+/* =========================
+   HEALTH CHECK / ROOT ROUTE
+========================= */
+app.get('/', (req, res) => {
+    res.json({ 
+        status: "online", 
+        message: "TT ULTRA Table Tennis API is running successfully!" 
+    });
+});
 /* =========================
    SERVER START
 ========================= */
 
-app.listen(port, () => {
-    console.log(`✅ Server is running at http://localhost:${port}`);
-    console.log(`   Players API: http://localhost:${port}/players`);
-    console.log(`   Tournaments: http://localhost:${port}/tournaments`);
-    console.log(`   Teams: http://localhost:${port}/teams`);
-    console.log(`   Chat API: http://localhost:${port}/api/chat`);
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`✅ Server is running on port ${PORT}`);
+    console.log(`   Players API: http://localhost:${PORT}/players`);
+    console.log(`   Tournaments: http://localhost:${PORT}/tournaments`);
+    console.log(`   Teams: http://localhost:${PORT}/teams`);
+    console.log(`   Chat API: http://localhost:${PORT}/api/chat`);
     console.log(
         `   Gemini: ${genAI ? 'configured' : 'NOT configured — set GEMINI_API_KEY in BACKEND/.env'}`
     );
