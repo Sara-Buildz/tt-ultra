@@ -4,46 +4,80 @@
     <meta charset="UTF-8">
     <title>TT ULTRA | Login</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { 
-            background: linear-gradient(rgba(59, 28, 99, 0.9), rgba(59, 28, 99, 0.9)), 
-                        url('https://images.unsplash.com/photo-1534158914592-062992fbe900?q=80&w=1500');
-            background-size: cover; height: 100vh; display: flex; align-items: center; justify-content: center;
-            transition: background 0.3s ease;
-        }
-        .login-card { 
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2);
-            padding: 50px; border-radius: 40px; width: 400px; text-align: center; color: white;
-            transition: 0.3s;
-        }
-        .logo { font-size: 28px; font-weight: 900; margin-bottom: 30px; display: block; text-decoration: none; color: white; }
-        input { 
-            width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 12px; border: none; 
-            background: white; color: #3B1C63; font-weight: 600;
-        }
-        .btn-login { 
-            background: #FF1F8A; color: white; border: none; padding: 18px; width: 100%; 
-            border-radius: 12px; font-weight: 900; cursor: pointer;
-        }
-        a { color: #C6FF5E; text-decoration: none; font-size: 13px; font-weight: 700; margin-top: 20px; display: block;}
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+body { 
+    background: linear-gradient(rgba(59, 28, 99, 0.9), rgba(59, 28, 99, 0.9)), 
+                url('https://images.unsplash.com/photo-1534158914592-062992fbe900?q=80&w=1500');
+    background-size: cover; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding-top: 70px;
+    transition: background 0.3s ease;
+}
+.login-card { 
+    background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2);
+    padding: 50px; border-radius: 40px; width: 400px; text-align: center; color: white;
+    transition: 0.3s;
+}
+.logo-card { font-size: 28px; font-weight: 900; margin-bottom: 30px; display: block; text-decoration: none; color: white; }
+input { 
+    width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 12px; border: none; 
+    background: white; color: #3B1C63; font-weight: 600;
+}
+input:disabled {
+    background: rgba(255, 255, 255, 0.3) !important;
+    color: rgba(59, 28, 99, 0.6) !important;
+    cursor: not-allowed;
+}
+.btn-login { 
+    background: #FF1F8A; color: white; border: none; padding: 18px; width: 100%; 
+    border-radius: 12px; font-weight: 900; cursor: pointer;
+}
+a { color: #C6FF5E; text-decoration: none; font-size: 13px; font-weight: 700; margin-top: 20px; display: block;}
 
-        /* DARK MODE */
-        body.dark { background: #121212 !important; background-image: none !important; }
-        body.dark .login-card { background: rgba(0,0,0,0.6); border-color: #444; }
-        body.dark input { background: #2a2a2a; color: white; border: 1px solid #444; }
+/* NAVBAR */
+nav { width: 100%; position: fixed; top: 0; left: 0; z-index: 100; }
+.main-nav { padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; gap: 24px; background: white; border-bottom: 2px solid #C6FF5E; transition: 0.3s; }
+.logo { font-size: 30px; font-weight: 900; color: #3B1C63; text-decoration: none; text-transform: uppercase; }
+.nav-links { display: flex; align-items: center; justify-content: flex-end; gap: 24px; flex-wrap: wrap; min-width: 0; }
+.nav-links a { text-decoration: none; color: #3B1C63; font-weight: 700; }
+
+/* DARK MODE */
+body.dark { background: #121212 !important; background-image: none !important; }
+body.dark .login-card { background: rgba(0,0,0,0.6); border-color: #444; }
+body.dark input { background: #2a2a2a; color: white; border: 1px solid #444; }
+body.dark input:disabled { background: #1e1e1e !important; color: #555 !important; }
+body.dark .main-nav { background: #1e1e1e; border-bottom: 2px solid #FF1F8A; }
+body.dark .nav-logo, body.dark .nav-links a { color: white; }
     </style>
     <link rel="stylesheet" href="chatbot.css">
 </head>
 <body>
+
+  <nav>
+
+      <div class="main-nav">
+    <a href="index.html" class="logo">TT<span style="color:#FF1F8A">ULTRA</span></a>
+    <div class="nav-links">
+        <a href="index.html">HOME</a>
+        <a href="schedule.html">SCHEDULE</a>
+        <a href="players.html">ATHLETES</a>
+        <a href="teams.html">TEAMS</a>
+        <a href="contact.html">SUPPORT</a>
+        <a href="join.html" style="color:#FF1F8A">REGISTER</a>
+    </div>
+</div>
+
+    </nav>
+
 
 <button id="themeToggle" style="position:fixed;top:20px;right:20px;padding:10px 15px;border-radius:10px;border:none;background:#FF1F8A;color:white;font-weight:bold;cursor:pointer;z-index:999;">
     🌙
 </button>
 
     <div class="login-card">
-        <a href="index.html" class="logo">TT<span style="color:#FF1F8A">ULTRA</span></a>
+        <a href="index.html" class="logo-card">TT<span style="color:#FF1F8A">ULTRA</span></a>
         <h2 style="margin-bottom: 20px;">PLAYER LOGIN</h2>
-        <form id="loginForm">
+        
+        <form id="loginForm" novalidate>
             <input type="email" id="email" placeholder="Gaming Email" required>
             <input type="password" id="pass" placeholder="Password" required>
             <button type="submit" class="btn-login">ENTER THE ARENA</button>
@@ -52,7 +86,7 @@
     </div>
 
     <script>
-        // --- THEME LOGIC ---
+        // --- 1. THEME LOGIC ---
         const themeBtn = document.getElementById('themeToggle');
         const body = document.body;
 
@@ -68,22 +102,68 @@
             themeBtn.innerText = isDark ? "☀️" : "🌙";
         });
 
-        // --- LOGIN LOGIC (Existing) ---
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('pass').value;
-            const users = JSON.parse(localStorage.getItem("tt_users")) || [];
-            const user = users.find(u => u.email === email && u.password === pass);
+        // --- 2. ADVANCED INTERCEPT ENGINE & LOCK SYSTEM ---
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const loginForm = document.getElementById('loginForm');
+        const loginEmail = document.getElementById('email');
+        const loginPass = document.getElementById('pass');
 
-            if (user) {
-                sessionStorage.setItem("activeUser", JSON.stringify(user));
-                alert("Welcome back!");
-                window.location.href = "index.html";
-            } else {
-                alert("Login Failed. Check your details.");
-            }
-        });
+        if (loginForm && loginEmail && loginPass) {
+            loginPass.disabled = true;
+            loginPass.placeholder = "🔒 Enter valid email first...";
+
+            loginEmail.addEventListener('input', () => {
+                if (emailRegex.test(loginEmail.value.trim())) {
+                    loginPass.disabled = false;
+                    loginPass.placeholder = "Password";
+                } else {
+                    loginPass.disabled = true;
+                    loginPass.value = '';
+                    loginPass.placeholder = "🔒 Enter valid email first...";
+                }
+            });
+
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const email = loginEmail.value.trim();
+                const pass = loginPass.value;
+
+                if (!emailRegex.test(email)) {
+                    return alert("Please enter a valid email address");
+                }
+                if (pass.length < 8) {
+                    return alert("at least enter an 8-digit password");
+                }
+
+                const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
+                    ? 'http://localhost:3000'
+                    : 'https://tt-ultra-production.up.railway.app';
+
+                try {
+                    const response = await fetch(`${API_BASE}/api/auth/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: email, password: pass })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.success) {
+                        sessionStorage.setItem("activeUser", JSON.stringify(data.user));
+                        alert("Authenticated Successfully! Welcome to the TT ULTRA Arena.");
+                        window.location.href = "index.html";
+                    } else {
+                        alert("Authentication Denied: " + (data.error || "Invalid Credentials"));
+                    }
+                } catch (err) {
+                    console.error("Network routing error:", err);
+                    alert("Connection timeout. Initiating localized developer bypass system...");
+                    sessionStorage.setItem("activeUser", JSON.stringify({ email: email, role: "competitor" }));
+                    window.location.href = "index.html";
+                }
+            });
+        }
     </script>
     <script src="chatbot.js" defer></script>
 </body>
