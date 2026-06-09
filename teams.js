@@ -6,7 +6,7 @@ async function loadTeams() {
     
     try {
         // Step 10: Fetching data from the API you built in server.js
-        const response = await fetch('http://localhost:3000/teams');
+     const response = await fetch('https://tt-ultra-production.up.railway.app/teams');
         
         if (!response.ok) throw new Error("Server error");
         

@@ -72,7 +72,7 @@ btn.addEventListener('click', () => {
 // Load Tournaments
 async function loadTournaments() {
     try {
-        const res = await fetch('http://localhost:3000/tournaments');
+        const res = await fetch('https://tt-ultra-production.up.railway.app/tournaments');
         const tournaments = await res.json();
         displayData(tournaments);
     } catch (e) {

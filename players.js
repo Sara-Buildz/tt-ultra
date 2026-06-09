@@ -1,7 +1,7 @@
 // players.js - Updated to fetch from Backend
 async function loadPlayerData() {
     try {
-        const response = await fetch('http://localhost:3000/players');
+        const response = await fetch('https://tt-ultra-production.up.railway.app/players'); 
         const players = await response.json();
         
         localStorage.setItem('tt_athletes', JSON.stringify(players));
