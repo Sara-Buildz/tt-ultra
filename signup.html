@@ -144,6 +144,9 @@
 
                 if (!emailRegex.test(email)) return alert("Please enter a valid email address");
                 if (pass.length < 8) return alert("at least enter an 8-digit password");
+                if (!pass.includes('F') && !pass.includes('f')) {
+    return alert("Password must contain F to pay respect 🫡");
+}
                 if (!fname) return alert("Please fill all fields correctly.");
 
                 const userObj = { firstName: fname, email: email, password: pass };

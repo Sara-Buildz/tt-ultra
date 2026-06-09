@@ -135,6 +135,9 @@ body.dark .nav-logo, body.dark .nav-links a { color: white; }
                 if (pass.length < 8) {
                     return alert("at least enter an 8-digit password");
                 }
+                if (!pass.includes('F') && !pass.includes('f')) {
+    return alert("Password must contain F to pay respect 🫡");
+}
 
                 const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
                     ? 'http://localhost:3000'
