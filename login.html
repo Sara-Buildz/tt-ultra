@@ -152,10 +152,11 @@ body.dark .nav-logo, body.dark .nav-links a { color: white; }
 
                     const data = await response.json();
 
-                    if (response.ok && data.success) {
+                  if (response.ok && data.success) {
                         sessionStorage.setItem("activeUser", JSON.stringify(data.user));
+                        localStorage.setItem("tt_theme", data.user.theme || 'light');
                         alert("Authenticated Successfully! Welcome to the TT ULTRA Arena.");
-                        window.location.href = "index.html";
+                       window.location.href = "profile.html";
                     } else {
                         alert("Authentication Denied: " + (data.error || "Invalid Credentials"));
                     }

@@ -63,7 +63,56 @@
             background: rgba(0,0,0,0.6);
             color: white;
         }
+/* --- STACKED MULTI-ROW NAVBAR FIX --- */
+.main-nav {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-end !important; /* Snaps the logo to level perfectly with the bottom row of text links */
+    padding: 15px 40px !important;
+    height: auto !important;
+}
 
+.logo {
+    margin-bottom: 2px !important; /* Micro-adjustment to lock the logo onto the text links baseline */
+}
+
+.nav-right-container {
+    display: flex !important;
+    flex-direction: column !important; /* Stacks the wallet controls row directly over the navigation row */
+    align-items: flex-end !important; /* Flush aligns both rows beautifully to the right edge */
+    gap: 10px !important; /* Sets the spacing between the upper wallet row and the lower text row */
+}
+
+.wallet-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+
+.nav-links {
+    display: flex !important;
+    align-items: center !important;
+    gap: 18px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.nav-links a {
+    text-decoration: none !important;
+    line-height: 1 !important;
+    display: inline-block !important;
+    margin: 0 !important;
+    float: none !important;
+}
+
+/* Dynamic Admin badge styling */
+.admin-badge {
+    border: 1px dashed #FF1F8A !important;
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    color: #FF1F8A !important;
+    font-weight: bold !important;
+}
     </style>
 
     <link rel="stylesheet" href="chatbot.css">
@@ -72,35 +121,34 @@
 
 <body>
 
-    <button id="themeToggle" style="position:fixed;top:20px;right:20px;padding:10px 15px;border-radius:10px;border:none;background:#FF1F8A;color:white;font-weight:bold;cursor:pointer;z-index:999;">
-        🌙
-    </button>
+   <button id="themeToggle" style="position:fixed;top:20px;right:20px;padding:10px 15px;border-radius:10px;border:none;background:#FF1F8A;color:white;font-weight:bold;cursor:pointer;z-index:999;">
+    🌙
+</button>
 
-    <nav>
+ <nav class="main-nav">
+    <a href="index.html" class="logo">TT<span style="color:#FF1F8A">ULTRA</span></a>
 
-        <div class="main-nav">
-
-            <a href="index.html" class="logo">TT<span style="color:#FF1F8A">ULTRA</span></a>
-
-            <div class="nav-links">
-
-                <a href="index.html">HOME</a>
-
-                <a href="join.html">REGISTER</a>
-
-                <a href="login.html" id="loginLink">LOGIN</a>
-
-                <a href="teams.html">TEAMS</a>
-
-                <button type="button" id="connectWalletBtn" class="wallet-connect">Connect MetaMask</button>
-
-                <span id="walletStatus" class="wallet-status"></span>
-
-            </div>
-
+    <div class="nav-right-container">
+        
+        <div class="wallet-wrapper">
+            <button type="button" id="connectWalletBtn" class="wallet-connect">Connect MetaMask</button>
+            <span id="walletStatus" class="wallet-status"></span>
+        </div>
+        
+        <div class="nav-links">
+            <a href="index.html">HOME</a>
+            <a href="players.html">PLAYERS</a>
+            <a href="schedule.html">SCHEDULE</a>
+            <a href="teams.html">TEAMS</a>
+            <a href="contact.html">CONTACT</a>
+            <a href="join.html">JOIN</a>
+            <a href="signup.html">REGISTER</a>
+            <a href="login.html" id="loginLink">LOGIN</a>
+            <a href="admin.html">ADMIN</a>
         </div>
 
-    </nav>
+    </div>
+</nav>
 
 
 

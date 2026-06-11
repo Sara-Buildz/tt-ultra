@@ -59,18 +59,33 @@
     </button>
 
     <nav>
-        <div class="main-nav">
-            <a href="index.html" class="logo">TT<span style="color:#FF1F8A">ULTRA</span></a>
-            <div class="nav-links">
-                <a href="index.html">HOME</a>
-                <a href="signup.html">REGISTER</a>
-                <a href="login.html" id="loginLink">LOGIN</a>
-                <a href="teams.html">TEAMS</a>
-                <button type="button" id="connectWalletBtn" class="wallet-connect">Connect MetaMask</button>
-                <span id="walletStatus" class="wallet-status"></span>
-            </div>
+    <div class="main-nav">
+
+        <a href="index.html" class="logo">
+            TT<span style="color:#FF1F8A">ULTRA</span>
+        </a>
+
+        <div class="nav-links">
+
+            <a href="index.html">HOME</a>
+            <a href="players.html">PLAYERS</a>
+            <a href="schedule.html">SCHEDULE</a>
+            <a href="teams.html">TEAMS</a>
+            <a href="content.html">CONTENT</a>
+            <a href="themes.html">THEMES</a>
+
+            <a href="join.html">REGISTER</a>
+            <a href="signup.html">SIGN UP</a>
+            <a href="login.html" id="loginLink">LOGIN</a>
+
+            <a href="admin.html">ADMIN</a>
+
+    
+
         </div>
-    </nav>
+
+    </div>
+</nav>
 
     <div class="form-container">
         <div class="signup-card">
@@ -136,7 +151,7 @@
                 }
             });
 
-            form.addEventListener('submit', (e) => {
+       form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const email = emailInput.value.trim();
                 const pass = passInput.value;
@@ -145,19 +160,32 @@
                 if (!emailRegex.test(email)) return alert("Please enter a valid email address");
                 if (pass.length < 8) return alert("at least enter an 8-digit password");
                 if (!pass.includes('F') && !pass.includes('f')) {
-    return alert("Password must contain F to pay respect 🫡");
-}
+                    return alert("Password must contain F to pay respect 🫡");
+                }
                 if (!fname) return alert("Please fill all fields correctly.");
 
-                const userObj = { firstName: fname, email: email, password: pass };
-                let users = JSON.parse(localStorage.getItem("tt_users")) || [];
-                users.push(userObj);
-                localStorage.setItem("tt_users", JSON.stringify(users));
-                
-                alert("Account Created Successfully!");
-                window.location.href = "login.html";
+                const API_BASE = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
+                    ? 'http://localhost:3000'
+                    : 'https://tt-ultra-production.up.railway.app';
+
+                try {
+                    const response = await fetch(`${API_BASE}/api/auth/signup`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ firstName: fname, email: email, password: pass })
+                    });
+                    const data = await response.json();
+                    if (response.ok && data.success) {
+                        alert("Account Created Successfully!");
+                        window.location.href = "login.html";
+                    } else {
+                        alert("Signup Failed: " + (data.error || "Unknown error"));
+                    }
+                } catch (err) {
+                    console.error("Signup error:", err);
+                    alert("Connection error. Please make sure the server is running.");
+                }
             });
-        }
 
         // --- 3. METAMASK WALLET LOGIC ---
         const walletBtn = document.getElementById('connectWalletBtn');
@@ -174,7 +202,7 @@
             } catch (error) { console.warn('Unable to check connected wallet:', error); }
         }
 
-        checkConnectedWallet();
+       checkConnectedWallet();
 
         walletBtn.addEventListener('click', async () => {
             if (!window.ethereum) {
@@ -191,6 +219,7 @@
                 walletStatus.textContent = 'Wallet connection cancelled.';
             }
         });
+        }
     </script>
     <script src="chatbot.js" defer></script>
 </body>

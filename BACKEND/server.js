@@ -329,33 +329,71 @@ app.post('/api/payments/checkout', async (req, res) => {
     }
 });
 /* =========================
-   AUTHENTICATION ROUTE (Rubric Requirement)
+   AUTHENTICATION ROUTES
 ========================= */
+const User = require('./models/User');
+
+app.post('/api/auth/signup', async (req, res) => {
+    try {
+        const { firstName, email, password } = req.body;
+        if (!firstName || !email || !password)
+            return res.status(400).json({ error: 'All fields are required.' });
+
+        const existing = await User.findOne({ email });
+        if (existing)
+            return res.status(409).json({ error: 'Email already registered.' });
+
+        const user = await User.create({ firstName, email, password, theme: 'light' });
+        res.status(201).json({ success: true, user: { firstName: user.firstName, email: user.email, theme: user.theme } });
+    } catch (error) {
+        console.error('[Signup] Error:', error.message);
+        res.status(500).json({ error: 'Signup failed.' });
+    }
+});
+
 app.post('/api/auth/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        
-        // Server-side validation check
-        if (!email || !password) {
-            return res.status(400).json({ error: 'Email and password are required fields.' });
-        }
-        
-        // Simulated Cloud verification (Perfect for grading without messing with DB records)
-        // Accepts any valid email structure and a password of 4+ characters
-        if (email.includes('@') && password.length >= 4) {
-            return res.json({
-                success: true,
-                message: "Authentication successful!",
-                user: { email: email, role: "competitor", token: "jwt_mock_ultra_token_2026" }
-            });
-        }
-        
-        return res.status(401).json({ error: 'Invalid security credentials. Password must be at least 4 characters.' });
+        if (!email || !password)
+            return res.status(400).json({ error: 'Email and password are required.' });
+
+        const user = await User.findOne({ email, password });
+        if (!user)
+            return res.status(401).json({ error: 'Invalid credentials.' });
+
+        res.json({ success: true, user: { firstName: user.firstName, email: user.email, theme: user.theme } });
     } catch (error) {
-        console.error('[Auth API] Error:', error.message);
-        res.status(500).json({ error: 'Authentication engine failure.' });
+        console.error('[Login] Error:', error.message);
+        res.status(500).json({ error: 'Login failed.' });
     }
 });
+
+app.get('/api/auth/profile/:email', async (req, res) => {
+    try {
+        const user = await User.findOne({ email: req.params.email }, '-password');
+        if (!user) return res.status(404).json({ error: 'User not found.' });
+        res.json(user);
+    } catch (error) {
+        console.error('[Profile] Error:', error.message);
+        res.status(500).json({ error: 'Failed to fetch profile.' });
+    }
+});
+
+app.put('/api/auth/profile/:email/theme', async (req, res) => {
+    try {
+        const user = await User.findOneAndUpdate(
+            { email: req.params.email },
+            { theme: req.body.theme },
+            { new: true, select: '-password' }
+        );
+        if (!user) return res.status(404).json({ error: 'User not found.' });
+        res.json({ success: true, user });
+    } catch (error) {
+        console.error('[Theme] Error:', error.message);
+        res.status(500).json({ error: 'Failed to update theme.' });
+    }
+});
+
 
 /* =========================
    HEALTH CHECK / ROOT ROUTE
